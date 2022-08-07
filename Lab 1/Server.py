@@ -7,7 +7,6 @@
 
 # Import libraries for networking communication and concurrency...
 
-
 import socket
 import threading
 import constants
@@ -20,8 +19,7 @@ import decode
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 # Define la direccion del servidor
 server_address = constants.IP_SERVER
-# Web root directory
-web_root = "./web_root/"
+
 
 def main():
     print("***********************************"*2)
@@ -89,7 +87,7 @@ def handler_client_connection(client_connection,client_address):
             decode.request(header)
         
         if (command == constants.GET):
-            response = methods.get(header, data, format, web_root)
+            response = methods.get(header, data, format)
             client_connection.sendall(response)
             is_connected = False
         

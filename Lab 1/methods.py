@@ -1,7 +1,9 @@
+# Import libraries
 import datetime
+import constants
 
 
-def get(r_header, r_data, format, web_root):
+def get(r_header, r_data, format):
     string_list = r_header.split(" ")
     method = string_list[0]
     requesting_file = string_list[1]
@@ -21,7 +23,7 @@ def get(r_header, r_data, format, web_root):
     if(myfile == "" or myfile == "/"):
         myfile = "index.html"
 
-    myfile = web_root + myfile
+    myfile = constants.WEB_ROOT + myfile
     try:
         # Lee en formato byte
         file = open(myfile, 'rb')
