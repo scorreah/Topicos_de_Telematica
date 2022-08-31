@@ -123,10 +123,7 @@ Para lanzar el servidor de AWS, se siguen los siguientes pasos:
  
 ### **Una mini guia de como un usuario utilizaría el software o la aplicación**
 1. Ingresar a [https://industrial.ubidots.com/accounts/signin/](https://industrial.ubidots.com/accounts/signin/) desde el navegador con el usuario y contraseñas enviadas al profesor.
-![]()  
 
-## Resultados o pantallazos 
-![]()  
   
 ---
 
