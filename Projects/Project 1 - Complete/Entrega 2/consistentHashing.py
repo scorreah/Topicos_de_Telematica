@@ -93,8 +93,8 @@ def execution(NUM_NODES,NUM_PARTITIONS):
     #print(full_routing_table)
 
     save_routing_table = json.dump(json.dumps(full_routing_table), open("routing_table", "w+"))   #Se guarda routing table
-    list4 = json.load(open("routing_table","r"))
-    print(list4)
+    # list4 = json.load(open("routing_table","r"))
+    # # print(list4)
     grouped_routing_table = itertools.groupby(
         full_routing_table, key=itemgetter("node_name")
     )

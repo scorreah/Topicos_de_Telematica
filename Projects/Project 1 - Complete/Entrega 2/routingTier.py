@@ -45,26 +45,24 @@ def handler_client_connection(client_connection,client_address):
 
         print('---------------- REQUEST ----------------')
         print(request[0].decode())
-        if method != constants.EXIT:
+        if method == constants.PUT or method == constants.GET:
             hash_value = hash_position(query[1]) 
             print(f"{hash_value} {type(hash_value)}")
 
         routing_table = json.loads(json.load(open("routing_table", "r")))                                                           #Access the rounting table
-        cont = 0
+        
         status = b""
         #PUT y GET METHOD
         if(method == constants.PUT or method == constants.GET):
             partition_name,node_name,port = rt_get(routing_table,hash_value)
             status = server_connection(port, data, partition_name, node_name)
-            #client_connection.sendall(status)
         #EXIT METHOD
         elif(method == constants.EXIT):
             status = b'bye'
             client_connection.sendall(status)
             break
         else:
-            response = '400 BCMD\n\rmethod-Description: Bad method\n\r'
-            client_connection.sendall(response.encode(constants.ENCONDING_FORMAT))
+            status = b'ERROR: Invalid command'
         client_connection.sendall(status)
 
     print(f'Now, client {client_address[0]}:{client_address[1]} is disconnected...')
@@ -95,13 +93,20 @@ def server_connection(port, data, partition_name, node_name):
 
 def rt_get(routing_table,hash_value):
     cont = 0
-    for i in routing_table:
-        cont += 1
-        if(hash_value < i["min_hash"]):                                                                    #Decide the partition to save the key
-            partition_name = routing_table[cont-1]["partition_name"]
-            node_name = routing_table[cont-1]["node_name"]
-            port = routing_table[cont-1]["port"]
-            break
+    if(hash_value > routing_table[-1]["min_hash"]):
+        partition_name = routing_table[-1]["partition_name"]
+        node_name = routing_table[-1]["node_name"]
+        port = routing_table[-1]["port"]
+    else:    
+        for i in routing_table:
+            cont += 1
+            if(hash_value < i["min_hash"]):                                                                    #Decide the partition to save the key
+                partition_name = routing_table[cont-1]["partition_name"]
+                node_name = routing_table[cont-1]["node_name"]
+                port = routing_table[cont-1]["port"]
+                break
+        
+    
     return partition_name,node_name,port
 
 
