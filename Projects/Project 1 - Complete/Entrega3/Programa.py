@@ -42,4 +42,4 @@ def Programa():
     #Partition assignment per node and per slave
     plantilla_archivos.particiones(nodes_number,partition_number,slaves_number)
 
-    return int(nodes_number), int(partition_number)
+    return int(nodes_number), int(partition_number), int(slaves_number)

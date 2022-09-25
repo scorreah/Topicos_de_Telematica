@@ -50,7 +50,7 @@ def handler_client_connection(client_connection,client_address):
         print('---------------- REQUEST ----------------')
         print(request[0].decode())
         status = b""
-    
+        
         #CREATE
         if (method == constants.CREATE or method== constants.LOAD):
             #Creates the data base

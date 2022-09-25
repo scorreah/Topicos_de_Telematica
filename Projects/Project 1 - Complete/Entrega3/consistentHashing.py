@@ -8,12 +8,10 @@ from Programa import Programa
 
 from operator import itemgetter
 
-NUM_NODES = 0
-NUM_PARTITIONS = 0
-
 def main():
-    NUM_NODES, NUM_PARTITIONS = Programa()
-    execution(NUM_NODES,NUM_PARTITIONS)
+    
+    num_nodes, num_partitions, num_slaves = Programa()
+    execution(num_nodes,num_partitions, num_slaves)
 
 def hash_name(name):
     encoded_name = name.encode("utf-8")
@@ -42,26 +40,26 @@ def create_partitions(node_name, partitions, port):
     return partition_hashes
 
 
-def create_routing_table(node_names, partitions):
+def create_routing_table(node_names, partitions, num_slaves):
     table = []
     port = constants.PORT + 1
     for node_name in node_names:
 
         table.extend(create_partitions(node_name, partitions, port))
-        port += 1
+        port += 1 + num_slaves
 
     table = sorted(table, key=itemgetter("min_hash"))
 
     return table
 
-def execution(NUM_NODES,NUM_PARTITIONS):
-    if NUM_NODES > len(string.ascii_lowercase):
+def execution(num_nodes,num_partitions, num_slaves):
+    if num_nodes > len(string.ascii_lowercase):
         print("Too many servers")
         sys.exit(1)
 
-    nodes = [f"server-{i}" for i in string.ascii_lowercase[:NUM_NODES]]
+    nodes = [f"server-{i}" for i in string.ascii_lowercase[:num_nodes]]
 
-    routing_table = create_routing_table(nodes, NUM_PARTITIONS)
+    routing_table = create_routing_table(nodes, num_partitions, num_slaves)
     routing_table = [
         {
             "min_hash": 0,
