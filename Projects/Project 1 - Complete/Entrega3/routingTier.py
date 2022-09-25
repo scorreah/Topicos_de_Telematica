@@ -49,8 +49,7 @@ def handler_client_connection(client_connection,client_address):
             hash_value = hash_position(query[1]) 
             print(f"{hash_value} {type(hash_value)}")
 
-        routing_table = json.loads(json.load(open("routing_table", "r")))                                                           #Access the rounting table
-        
+        routing_table = json.loads(json.load(open("routing_table", "r")))                                                           #Access the rounting table 
         status = b""
         #PUT y GET METHOD
         if(method == constants.PUT or method == constants.GET):
