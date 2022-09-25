@@ -19,7 +19,7 @@ def Programa():
         plantilla_archivos.fortDB_file(name)
         if j >= 123: break 
 
-    #Partition assignment
+    #Partition assignment per node
     plantilla_archivos.particiones(nodes_number,partition_number)
 
     return int(nodes_number), int(partition_number)
