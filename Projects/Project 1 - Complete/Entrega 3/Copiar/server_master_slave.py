@@ -10,6 +10,7 @@ import socket
 import threading
 import fortDB
 import constants
+import json
 
 # Defining a socket object...
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -41,10 +42,14 @@ def handler_client_connection(client_connection,client_address):
     print(f'New incomming connection is coming from: {client_address[0]}:{client_address[1]}')
     is_connected = True
     while is_connected:
-        request = client_connection.recv(constants.RECV_BUFFER_SIZE).split(b'\r\n\r\n')
+        data = client_connection.recv(constants.RECV_BUFFER_SIZE)
+        request =data.split(b'\r\n\r\n')
         query = request[0].decode().split(' ')                                                                          #Method and file_name b"GET /cover.jpg HTTP/1.1\r\nHost: data.pr4e.org\r\n\r\n"
         method = query[0]                                                                                               #Split the request to get the method and the file name to obtain
         
+       
+
+
         print('---------------- REQUEST ----------------')
         print(request[0].decode())
         status = b""
@@ -74,6 +79,19 @@ def handler_client_connection(client_connection,client_address):
             if len(query) == 3:
                 active_database.put(query[1], query[2])
                 status = b'OK! put'
+                 #Master is alive
+                if not (is_master_alive()):
+                    slave_table = json.load(open("slave_table", "r"))
+                    cont1 = 0
+                    cont2 = 1
+                    for slave in slave_table:
+                        if cont1 != 0: 
+                            s_port = slave["slave_port"]
+                            s_slave_name = f"slave{cont2}"
+                            s_partition_name = active_database.location.replace("slave1", s_slave_name)
+                            server_connection(s_port, data, s_partition_name) 
+                        cont1 += 1
+                        cont2 += 1
             else: 
                 status = b'ERROR: Invalid command'    
         #GET
@@ -110,6 +128,42 @@ def handler_client_connection(client_connection,client_address):
     print(f'Now, client {client_address[0]}:{client_address[1]} is disconnected...')
     client_connection.close()
 
-                                                                                    
+def is_master_alive():
+    slave_table = json.load(open("slave_table", "r")) 
+    master = slave_table[0]["master_name"]
+    master_port = slave_table[0]["port"]
+
+    node_socket = socket.socket()  # instantiate
+    try:
+        node_socket.connect((constants.IP_SERVER, master_port))  # connect to the server
+        node_socket.close()
+        return True
+    except Exception as E:
+        node_socket.close()
+        print('Master is death! :(')
+        return  False
+
+def server_connection(port, data, partition_name):
+    node_socket = socket.socket()  # instantiate
+    node_socket.connect((constants.IP_SERVER, port))  # connect to the server
+
+    message = data 
+    load = f"LOAD {partition_name}"
+    node_socket.sendall(load.encode())  # load message
+    load_res = node_socket.recv(1024)  # receive response
+    
+    node_socket.sendall(data)  # Request message
+    data = node_socket.recv(1024)  # receive response
+
+    bye = "EXIT"
+    node_socket.sendall(bye.encode()) # Exit message
+    bye = node_socket.recv(1024)      # receive response
+
+    print('Received from server: ' + data.decode())  # show in terminal
+    
+    node_socket.close()  # close the connection   
+
+    return data
+
 if __name__ == "__main__":
     main()
