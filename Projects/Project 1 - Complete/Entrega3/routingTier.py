@@ -1,4 +1,6 @@
+from ast import Try
 import hashlib
+from logging import exception
 import socket
 import constants
 import threading
@@ -54,7 +56,7 @@ def handler_client_connection(client_connection,client_address):
         #PUT y GET METHOD
         if(method == constants.PUT or method == constants.GET):
             partition_name,node_name,port = rt_get(routing_table,hash_value)
-            status = server_connection(port, data, partition_name, node_name)
+            status = server_connection(port, data, partition_name, routing_table)
         #EXIT METHOD
         elif(method == constants.EXIT):
             status = b'bye'
@@ -67,28 +69,62 @@ def handler_client_connection(client_connection,client_address):
     print(f'Now, client {client_address[0]}:{client_address[1]} is disconnected...')
     client_connection.close()
 
-def server_connection(port, data, partition_name, node_name):
+def server_connection(port, data, partition_name, routing_table):
 
+    
     node_socket = socket.socket()  # instantiate
-    node_socket.connect((constants.IP_SERVER, port))  # connect to the server
+    try:
+        node_socket.connect((constants.IP_SERVER, port))  # connect to the server
 
-    message = data 
-    load = f"LOAD {partition_name}"
-    node_socket.sendall(load.encode())  # load message
-    load_res = node_socket.recv(1024)  # receive response
-    
-    node_socket.sendall(data)  # Request message
-    data = node_socket.recv(1024)  # receive response
+        message = data 
+        load = f"LOAD {partition_name}"
+        node_socket.sendall(load.encode())  # load message
+        load_res = node_socket.recv(1024)  # receive response
+        
+        node_socket.sendall(data)  # Request message
+        data = node_socket.recv(1024)  # receive response
 
-    bye = "EXIT"
-    node_socket.sendall(bye.encode()) # Exit message
-    bye = node_socket.recv(1024)      # receive response
+        bye = "EXIT"
+        node_socket.sendall(bye.encode()) # Exit message
+        bye = node_socket.recv(1024)      # receive response
 
-    print('Received from server: ' + data.decode())  # show in terminal
-    
-    node_socket.close()  # close the connection   
+        print('Received from server: ' + data.decode())  # show in terminal
+        
+        node_socket.close()  # close the connection   
 
-    return data
+        return data
+
+    except Exception as E:
+        print('Master connection fails, redirecting service to a slaver server ...')
+        for partition in routing_table:
+            if partition_name == partition["partition_name"]:
+                slave_partition = partition["slaves"][0]["slave_name"]
+                slave_port = partition["slaves"][0]["port"]
+                break
+              
+        node_socket.close()
+
+        node_socket = socket.socket()  # instantiate
+        node_socket.connect((constants.IP_SERVER, slave_port))  # connect to the slave server
+        message = data 
+        load = f"LOAD {slave_partition}"
+        node_socket.sendall(load.encode())  # load message
+        load_res = node_socket.recv(1024)  # receive response
+        
+        node_socket.sendall(data)  # Request message
+        data = node_socket.recv(1024)  # receive response
+
+        bye = "EXIT"
+        node_socket.sendall(bye.encode()) # Exit message
+        bye = node_socket.recv(1024)      # receive response
+
+        print('Received from slave: ' + data.decode())  # show in terminal
+        
+        node_socket.close()  # close the connection   
+
+        return data
+
+        
 
 def rt_get(routing_table,hash_value):
     cont = 0
