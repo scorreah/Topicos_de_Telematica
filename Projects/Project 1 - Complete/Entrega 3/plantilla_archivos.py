@@ -34,7 +34,7 @@ def constants_file(name,port):
         f1.seek(0)
         f1.truncate()
         f1.write(contents)
-
+    
 def fortDB_file(name):
     fortDB = open("copiar/fortDB.py")
     copia_fortDB = fortDB.read()
@@ -57,11 +57,3 @@ def particiones(nodes_number,partition_number,slave_number):
                 slave_path = slave_name+"/"+partition_s_name
                 json.dump({}, open(slave_path, "w+"))
 
-def server_master_slave(name):
-    server = open("copiar/server_master_slave.py")
-    copia_Server = server.read()
-    server.close()
-    path = name+"/server_master_slave.py"
-    nuevo_Server = open(path,"w")
-    nuevo_Server.write(copia_Server)
-    nuevo_Server.close()

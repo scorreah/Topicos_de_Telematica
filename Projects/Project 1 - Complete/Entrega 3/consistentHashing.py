@@ -20,30 +20,19 @@ def hash_name(name):
     return int(hash_encoded_name[:7], 16)
 
 
-def create_partitions(node_name, partitions, port, num_slaves):
+def create_partitions(node_name, partitions, port):
     partition_hashes = []
-    slaves = []
-    port_partition = port
+
     for partition_number in range(partitions):
         partition_name = f"{node_name}-{partition_number}"
         partition_hash = hash_name(partition_name)
-        for slave in range(num_slaves):
-            slave_no = f"slave{slave+1}"
-            port += 1
-            slaves.append(
-                {
-                    "slave_name": partition_name.replace('server',slave_no),
-                    "port": port,
-                }
-            )
-        port = port_partition
+
         partition_hashes.append(
             {
                 "min_hash": partition_hash,
                 "partition_name": partition_name,
                 "node_name": node_name,
-                "port" : port_partition,
-                "slaves": slaves,
+                "port" : port,
                 
             }
         )
@@ -56,7 +45,7 @@ def create_routing_table(node_names, partitions, num_slaves):
     port = constants.PORT + 1
     for node_name in node_names:
 
-        table.extend(create_partitions(node_name, partitions, port, num_slaves))
+        table.extend(create_partitions(node_name, partitions, port))
         port += 1 + num_slaves
 
     table = sorted(table, key=itemgetter("min_hash"))
@@ -76,8 +65,7 @@ def execution(num_nodes,num_partitions, num_slaves):
             "min_hash": 0,
             "partition_name": routing_table[-1]["partition_name"],
             "node_name": routing_table[-1]["node_name"],
-            "port" : routing_table[-1]["port"],
-            "slaves":routing_table[-1]["slaves"] 
+            "port" : routing_table[-1]["port"] 
         }
     ] + routing_table
 
@@ -93,7 +81,6 @@ def execution(num_nodes,num_partitions, num_slaves):
                 "partition_name": i["partition_name"],
                 "node_name": i["node_name"],
                 "port":i["port"],
-                "slaves": i["slaves"],
                 "served_hashes": j["min_hash"] - i["min_hash"],
             }
         )

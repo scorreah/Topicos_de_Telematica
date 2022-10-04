@@ -15,7 +15,7 @@
 
 ## **1. Breve descripción de la actividad**
 
-Se realizó el desarrollo e implementación de una base de datos distribuida con un sistema de archivos key-value. Ademas de esto, realiza operaciones basicas tipo CRUD, y la comunicación es establecida por medio de sockets. La base datos cuenta con particionamiento, gestionado mediante una routing tear. Y además, cuenta con replicación, realizado por medio de un mecanismo de leader-follower.
+Se realizó el desarrollo e implementación de una base de datos distribuida con un sistema de archivos key-value. Ademas de esto, realiza operaciones basicas tipo CRUD, y la comunicación es establecida por medio de sockets. La base datos cuenta con particionamiento, gestionado mediante una routing tear.
 
 ### **1.1. Que aspectos cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)**
 * La visión global del sistema es un cliente externo interesado en Almacenar datos <k,v> en una base de datos distribuida
@@ -30,16 +30,16 @@ Se realizó el desarrollo e implementación de una base de datos distribuida con
 * La base de datos implementa algoritmos basicos de particionamiento.
 * La base de datos implementa el particionamiento mediante un mecanismo de claves y el hash SHA1
 * El cliente está en capacidad de contactar el Frontend de la base de datos  (ServerFrontend) el cual recibe el requerimiento CRUD del cliente, y determina que servidor de datos (ServerData) procesa dicho requerimiento
-* La base de datos implementa algoritmos basicos de replicación y particionamiento.
-* La base de datos presenta flexibilidad al momento de realizar escalamiento. Adicionalmente, tiene mecanismos de tolerancia a fallos.
-* La base de datos implementa la replicacion utilizando el esquema más básico leader-follower con Consistencia (follower sync)
-* El sistema garantiza la consistencia de datos bloqueando el master hasta que todos los slave se actualizan
-* Los servidores de datos (ServerData), cooperan, coordinan y ejecutan las acciones del CRUD para garantizar Rendimiento, Confiablidad, Tolerancia a Fallos, Seguridad y Escalabilidad entre otros.
-* El sistema de la base de datos es de tipo WRMN
 
 ### **1.2. Que aspectos NO cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)**
+* La base de datos implementa algoritmos basicos de replicación y particionamiento.
+* La base de datos presenta flexibilidad al momento de realizar escalamiento. Adicionalmente, tiene mecanismos de tolerancia a fallos.
+* La base de datos implementa la replicacion utilizando el esquema más básico leader-follower con Consistencia Eventual (sync+async)
 * El sistema permite almacenar n registros con la misma clave <k>
+* El sistema garantiza la consistencia de datos haciendo....
+* Los servidores de datos (ServerData), cooperan, coordinan y ejecutan las acciones del CRUD para garantizar Rendimiento, Confiablidad, Tolerancia a Fallos, Seguridad y Escalabilidad entre otros.
 * La base de datos posee operaciones para garantizar la transaccionalidad de las operaciones y consultas
+* El sistema de la base de datos es de tipo WORM
   
 ---
 
@@ -56,38 +56,27 @@ Se implementan buenas practicas como DRY, YAGNI y el principio de Least Surprise
 
 ## **3. Descripción del ambiente de desarrollo y técnico: lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones**
 * Lenguaje de programación: Python 3.10.1
-* Librerías: socket, os, json, threading, hashlib, itertools, sys, datetime, random
+* Librerías: socket, os, json, threading, hashlib, itertools, sys
 ### **Como se compila y ejecuta**
-Para ejecutar el programa simplemente dirigirse a la carpeta `Project\ 1\ -\ Complete/Entrega\ 3` y ejecutar el comando:
+Para ejecutar el programa simplemente dirigirse a la carpeta `Project\ 1\ -\ Complete/Entrega\ 2` y ejecutar el comando:
 * En Windows:
 
     ```bash
-    py .\consistenHashing.py # Ejecutarse antes que cualquiera de los otros programas. Ahí se específica la cantidad de nodos master, cantidad de esclavos por nodo y la cantidad de particiones por nodo particiones que se desea tener y al tiempo se crean.  
-
-    py .\server_slave.py #Correr en cada carpeta slave que no sea la slave1 recien creada el codigo server_slave.py para habilitar los slaves.  
-
-    py .\server_master_slave.py #Correr en cada carpeta slave1 recien creada el codigo server_master_slave.py para habilitar los slaves. 
-
-    py .\server.py # Correr en cada carpeta recien creada el server.py para habilitar los servidores.  
-
-    py .\routingTier.py # Ejecutarse despues de haber ejecutado los server.py en cada una de las carpeta server creadas.  
-
-    py .\client.py # Ejecutarse despues de que el servidor routingTier.py se encuentre activo.
+    py .\consistenHashing.py # Ejecutarse antes que cualquiera de los otros programas. Ahí se específica la cantidad de nodos y particiones que se desea tener y al tiempo se crean.
+    py .\server.py # Correr en cada carpeta recien creada el server.py para habilitar los servidores.
+    py .\routingTier.py # Ejecutarse despues de haber ejecutado los server.py en cada una de las carpeta server creadas
+    py .\client.py # Ejecutarse despues de que el servidor routingTier.py se encuentre activo 
     ``` 
 * En Linux:
      ```bash
      sudo python3 ./consistenHashing.py
-     sudo python3 ./server.py  
-     sudo python3 ./server_slave.py  
-     sudo python3 ./server_master_slave.py  
+     sudo python3 ./server.py
      sudo python3 ./routingTier.py
      sudo python3 ./client.py
      ```
 ### **Detalles del desarrollo**
 El proyecto se desarrolló en python por medio de 8 archivos: 
-* server.py: Contiene el programa principal del nodo, el manejo de threads y la inicialización de los sockets. También, recibe requests del cliente que representan comandos para manejar la base de datos fortDB e igualmente envía responses al cliente según el comando envíado.  
-* server_master_slave.py: Archivo correspondiente para el nodo encargado de reeemplazar al master dado el caso en que este se caiga. Así mismo dentro de su configuración tiene conocomiento de los esclavos disponibles y así se convierte en un master capaz de actualizar al resto de nodos.     
-* server_slave.py: Contiene el programa principal de cada slave, el manejo de threads y la inicialización de los sockets. Este programa se encarga de guardar la información que le envia el master para garantizar la replicación.  
+* server.py: Contiene el programa principal del nodo, el manejo de threads y la inicialización de los sockets. También, recibe requests del cliente que representan comandos para manejar la base de datos fortDB e igualmente envía responses al cliente según el comando envíado.
 * constants.py: Contiene constantes y variables usadas a través de varios de los otros archivos del proyecto.
 * fortDB.py: Implementa los queries tipo CRUD que permiten el manejo de la base de datos. 
 * client.py: Se encarga de decodificar o explicar los diferentes mensajes recibidos y entregados en los request y response por el mini servidor. Los usuarios lo pueden usar a modo de **interfaz de línea de comandos** (CLI) para ejecutar queries CRUD sobre la base de datos.
