@@ -3,8 +3,6 @@ import socket
 import constants
 import threading
 import json
-import random
-from datetime import datetime
 
 #Conexion del cliente
 server_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
@@ -47,28 +45,12 @@ def handler_client_connection(client_connection,client_address):
 
         print('---------------- REQUEST ----------------')
         print(request[0].decode())
-        if method == constants.PUT or method == constants.GET or method == constants.DELETE:
-            hash_value = hash_position(query[1]) 
+        if (method == constants.PUT and len(query) == 3):
+            hash_value = hash_position(query[1])
             print(f"{hash_value} {type(hash_value)}")
-
-        routing_table = json.loads(json.load(open("routing_table", "r")))                                                           #Access the rounting table 
-        status = b""
-        #PUT y GET METHOD
-        if(method == constants.GET):
-            partition_name,node_name,port,slaves = rt_get(routing_table,hash_value)
-            servers = slaves
-            servers.append(
-                {
-                    "slave_name": partition_name,
-                    "port": port,
-                }
-            )
-            random.seed(str(datetime.now()))
-            rr = random.choice(servers)
-            status = server_connection(rr["port"], data, rr["slave_name"])
-        elif(method == constants.PUT or method == constants.DELETE):
-            partition_name,node_name,port,slaves = rt_get(routing_table,hash_value)
-            status = server_connection(port, data, partition_name)
+        elif (method == constants.GET and len(query) == 2):
+            hash_value = hash_position(query[1])
+            print(f"{hash_value} {type(hash_value)}")
         #EXIT METHOD
         elif(method == constants.EXIT):
             status = b'bye'
@@ -76,12 +58,19 @@ def handler_client_connection(client_connection,client_address):
             break
         else:
             status = b'ERROR: Invalid command'
+
+        routing_table = json.loads(json.load(open("routing_table", "r")))                                                           #Access the rounting table 
+        status = b""
+        #PUT y GET METHOD
+        if(method == constants.PUT or method == constants.GET):
+            partition_name,node_name,port = rt_get(routing_table,hash_value)
+            status = server_connection(port, data, partition_name, node_name)
         client_connection.sendall(status)
 
     print(f'Now, client {client_address[0]}:{client_address[1]} is disconnected...')
     client_connection.close()
 
-def server_connection(port, data, partition_name):
+def server_connection(port, data, partition_name, node_name):
 
     node_socket = socket.socket()  # instantiate
     node_socket.connect((constants.IP_SERVER, port))  # connect to the server
@@ -110,7 +99,6 @@ def rt_get(routing_table,hash_value):
         partition_name = routing_table[-1]["partition_name"]
         node_name = routing_table[-1]["node_name"]
         port = routing_table[-1]["port"]
-        slaves = routing_table[-1]["slaves"]
     else:    
         for i in routing_table:
             cont += 1
@@ -118,11 +106,10 @@ def rt_get(routing_table,hash_value):
                 partition_name = routing_table[cont-1]["partition_name"]
                 node_name = routing_table[cont-1]["node_name"]
                 port = routing_table[cont-1]["port"]
-                slaves = routing_table[cont-1]["slaves"]
                 break
         
     
-    return partition_name,node_name,port, slaves
+    return partition_name,node_name,port
 
 
 if __name__ == "__main__":
