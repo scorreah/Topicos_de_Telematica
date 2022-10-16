@@ -5,7 +5,6 @@ import string
 import json
 import constants
 from Programa import Programa
-
 from operator import itemgetter
 
 def main():

@@ -15,7 +15,7 @@
 
 ## **1. Breve descripción de la actividad**
 
-Se realizó el desarrollo e implementación de una base de datos distribuida con un sistema de archivos key-value. Ademas de esto, realiza operaciones basicas tipo CRUD, y la comunicación es establecida por medio de sockets. La base datos cuenta con particionamiento, gestionado mediante una routing tear.
+Se realizó el desarrollo e implementación de una base de datos distribuida con un sistema de archivos key-value. Ademas de esto, realiza operaciones basicas tipo CRUD, y la comunicación es establecida por medio de sockets. La base datos cuenta con particionamiento, gestionado mediante una routing tear. Y además, cuenta con replicación, realizado por medio de un mecanismo de leader-follower.
 
 ### **1.1. Que aspectos cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)**
 * La visión global del sistema es un cliente externo interesado en Almacenar datos <k,v> en una base de datos distribuida

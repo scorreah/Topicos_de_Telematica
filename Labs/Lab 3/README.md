@@ -151,12 +151,9 @@ Se realizó el despliegue de un servidor de wordpress implementado mediante dock
    18. Ejecutamos Docker-compose:
         ![](img/docker-compose.png)
         ![](img/docker-compose2.png)
-   19. Finalmente, ingresamos al dominio ![https://www.scorreah.tk/](https://www.scorreah.tk/) y podremos verificar el certificado SSL y la conexión https:
+   19. Finalmente, ingresamos al dominio [https://www.scorreah.tk/](https://www.scorreah.tk/) y podremos verificar el certificado SSL y la conexión https:
         ![](img/res_final.png)
    20. Configuramos Wordpress y listo, hemos terminado!
-        ![](img/wp-admin.png)
-        ![](img/wp-admin1.png)
-        ![](img/wp-admin2.png)
         ![](img/scorreah.png)
 
 ## **4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones**

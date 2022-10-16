@@ -79,7 +79,7 @@ def handler_client_connection(client_connection,client_address):
         #GET
         elif(method == constants.GET):
             if len(query) == 2:
-                status = active_database.get(query[1]).encode()
+                status = str.encode(active_database.get(query[1]))
             else: 
                 status = b'ERROR: Invalid command'    
         #DELETE
@@ -90,7 +90,7 @@ def handler_client_connection(client_connection,client_address):
         #PING
         elif(method == constants.PING):
             #pingMethod(client)
-            status = active_database.ping()
+            status = str.encode(active_database.ping())
         #RESET
         elif(method == constants.RESET):
             db_name = active_database.location
