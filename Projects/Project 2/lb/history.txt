@@ -1,0 +1,40 @@
+sudo apt update && sudo apt upgrade -y
+sudo snap install certbot --classic
+sudo apt install letsencrypt -y
+sudo apt install nginx -y
+sudo nano /etc/nginx/nginx.conf
+sudo rm /etc/nginx/nginx.conf
+sudo nano /etc/nginx/nginx.conf
+sudo mkdir -p /var/www/letsencrypt
+sudo nginx -t
+sudo service nginx reload
+sudo letsencrypt certonly -a webroot --webroot-path=/var/www/letsencrypt -m scorreah@eafit.edu.co --agree-tos -d cloud.team-ms3.tk
+sudo certbot --server https://acme-v02.api.letsencrypt.org/directory -d *.team-ms3.tk --manual --preferred-challenges dns-01 certonly
+mkdir -p nginx/ssl ; sudo su
+
+cp /etc/letsencrypt/live/cloud.team-ms3.tk/* /home/ubuntu/nginx/ssl/
+cp /etc/letsencrypt/live/team-ms3.tk/* /home/ubuntu/nginx/ssl/
+sudo nano /etc/letsencrypt/options-ssl-nginx.conf
+cp /etc/letsencrypt/options-ssl-nginx.conf /home/ubuntu/nginx/ssl/
+cd nginx/ssl/
+ls
+openssl dhparam -out ssl-dhparams.pem 512
+cp ssl-dhparams.pem /etc/letsencrypt/
+DOMAIN='team-ms3.tk' bash -c 'cat /etc/letsencrypt/live/$DOMAIN/fullchain.pem /etc/letsencrypt/live/$DOMAIN/privkey.pem > /etc/letsencrypt/$DOMAIN.pem'
+cp /etc/letsencrypt/live/team-ms3.tk/* /home/ubuntu/nginx/ssl/
+
+sudo apt install docker.io -y && sudo apt install docker-compose -y
+sudo apt autoremove -y
+sudo apt install git -y
+mkdir -p nginx
+git clone https://github.com/st0263eafit/st0263-2022-2.git
+cd st0263-2022-2/docker-nginx-wordpress-ssl-letsencrypt/
+sudo cp docker-compose.yml nginx.conf ssl.conf /home/ubuntu/nginx/
+sudo systemctl enable docker ; sudo systemctl start docker ; sudo usermod -a -G docker ubuntu
+ps ax | grep nginx
+sudo systemctl disable nginx ; sudo systemctl stop nginx
+cd ~/nginx/
+ls
+sudo nano nginx.conf
+sudo nano docker-compose.yml
+sudo docker-compose up --build -d

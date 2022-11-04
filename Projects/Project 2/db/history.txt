@@ -1,0 +1,19 @@
+sudo apt update && sudo apt upgrade -y
+sudo apt install docker.io -y && sudo apt install docker-compose -y
+mkdir docker && cd "$_"
+sudo systemctl status docker
+sudo systemctl enable docker
+sudo nano docker-compose.yaml
+----docker-compose.yaml
+sudo docker-compose up --build -d
+sudo docker ps
+--
+sudo docker system prune -a
+--
+sudo docker exec -it docker_mariadb_1 mariadb --user root -p bitnami_moodle
+---
+show databases;
+SELECT User FROM mysql.user;
+CREATE USER 'bn_moodle' IDENTIFIED BY 'moodle123';
+GRANT ALL PRIVILEGES ON *.* TO 'bn_moodle'@'%';
+---

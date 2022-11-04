@@ -1,0 +1,24 @@
+sudo apt update && sudo apt upgrade -y
+sudo apt install nfs-common -y
+sudo mkdir -p /mnt/moodle
+sudo nano /etc/fstab
+
+172.31.84.245:/mnt/nfs_share /mnt/moodle nfs auto 0 0
+
+sudo mount -a
+ls /mnt/moodle/
+touch /mnt/moodle/success.txt
+
+--------------------------------------------------------
+
+sudo apt install docker.io -y && sudo apt install docker-compose -y
+mkdir docker && cd "$_"
+sudo systemctl status docker
+sudo systemctl enable docker
+sudo nano docker-compose.yaml
+----docker-compose.yaml
+sudo usermod -a -G docker ubuntu
+sudo docker-compose up --build -d
+sudo docker ps
+
+docker run -it --rm docker_mariadb_1 mariadb -h 172.31.94.237 -u root -p bitnami_moodle
