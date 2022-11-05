@@ -22,4 +22,16 @@ sudo usermod -a -G docker ubuntu
 sudo docker-compose up --build -d
 sudo docker ps
 
+---------------------------
+# Just in case, to prove connection to local db
 docker run -it --rm docker_mariadb_1 mariadb -h 172.31.94.237 -u root -p bitnami_moodle
+---------------------------
+
+# In DCA to apply rules
+sudo ufw allow from 192.168.10.0/24 to any port nfs
+sudo ufw allow from 0.0.0.0/0 to any port ssh
+sudo ufw allow from 0.0.0.0/0 to any port http
+sudo ufw allow from 0.0.0.0/0 to any port https
+sudo ufw allow from 192.168.10.0/24 to any port 3306
+sudo ufw enable
+sudo ufw status
