@@ -1,4 +1,4 @@
-# **Lab05 (Parte 2) - EMR HDFS Managing files and data**
+# **Lab05 (Parte 3) - EMR with Map/Reduce**
 
 ### **Información general**
 > Info de la materia: ST0263 Tópicos especiales en telemática
@@ -13,7 +13,7 @@
 ## **1. Breve descripción de la actividad**
 
 Se realizó la creación, despliegue, finalización y clonación de un Cluster de AWS con EMR. Se realizaron los primeros pasos con el cluster y se probaron las funcionalidades de hadoop, jupyter, hue y zeppelin. Se hizo también uso de S3 para almacenar parte de la información del cluster, a su vez que se vinculó con este.
-Luego se hicieron operaciones con hdfs.
+Luego se hicieron operaciones con hdfs. Y finalmente se solucionaron ejercicios con Map/Reduce
 
 ### **1.1. Que aspectos cumplió o desarrolló de la actividad propuesta por el profesor (requerimientos funcionales y no funcionales)**
 
@@ -24,6 +24,7 @@ Luego se hicieron operaciones con hdfs.
 * El cluster se realizó en la versión 6.3.1 de Amazon
 * El cluster contó con los servicios de Hue, Hadoop, Spark, Jupiter y Zeppelin
 * Los archivos de HDFS se gestionaron tanto por terminal via HDFS, como via Hue en Amazon EMR
+* Los problemas de Map/Reduce se solucionaron con python y Mr Jobs
   
 ---  
 
@@ -41,7 +42,8 @@ Luego se hicieron operaciones con hdfs.
   
 ### **Detalles técnicos**  
 
-*  **Servicios:** Hadoop, Hue, Jupyter, Zeppelin
+* **Servicios:** Hadoop, Hue, Jupyter, Zeppelin
+* **Librerías:** mrjob
 * **Cluster** AWS EMR 6.3.1
 * **Bucket:** AWS S3
 
@@ -211,6 +213,8 @@ Luego se hicieron operaciones con hdfs.
         ![](img/Parte-2/hue-files.png)
         ![](img/Parte-2/hue-files-1.png)
         ![](img/Parte-2/hue-files-2.png)
+### **Map/Reduce**
+   Todos los ejercicios de Map/Reduce están resueltos en [Carpeta 3](./Parte-3/) y resueltos con los datasets de [datasets/otros/](./datasets/otros/)
 
 
 ## **4. Descripción del ambiente de EJECUCIÓN (en producción) lenguaje de programación, librerias, paquetes, etc, con sus numeros de versiones**
@@ -237,5 +241,6 @@ Para acceder una maquina del cluster se hace de la siguiente manera:
 ### **Referencias:**
 - [Github st0263 Eafit - Bigdata lab5-1](https://github.com/st0263eafit/st0263-2022-2/blob/main/bigdata/lab5-1-aws-emr.txt)
 - [Github st0263 Eafit - Bigdata lab5-2](https://github.com/st0263eafit/st0263-2022-2/tree/main/bigdata/01-hdfs)
+- [Github st0263 Eafit - Bigdata lab5-3](https://github.com/st0263eafit/st0263-2022-2/blob/main/bigdata/lab5-3-mrjob.txt)
 
 #### versión README.md -> 1.0 (2022-octubre)
