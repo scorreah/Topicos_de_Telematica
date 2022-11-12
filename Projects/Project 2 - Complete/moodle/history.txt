@@ -1,0 +1,10 @@
+sudo apt update && sudo apt upgrade -y
+sudo apt install docker.io -y && sudo apt install docker-compose -y
+mkdir docker && cd "$_"
+sudo systemctl status docker
+sudo systemctl enable docker
+sudo nano docker-compose.yaml
+----docker-compose.yaml
+sudo usermod -a -G docker ubuntu
+sudo docker-compose up --build -d
+sudo docker ps
